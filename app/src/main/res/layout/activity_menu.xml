@@ -1,25 +1,59 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
+    android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".MenuActivity">
+    android:background="@color/colormain">
 
-    <Button
-        android:id="@+id/translate"
-        android:layout_width = "wrap_content"
-        android:layout_height="wrap_content">
-    </Button>
-    <Button
-        android:id="@+id/chatting"
-        android:layout_width = "wrap_content"
-        android:layout_height="wrap_content">
-    </Button>
-    <Button
-        android:id="@+id/community"
-        android:layout_width = "wrap_content"
-        android:layout_height="wrap_content">
-    </Button>
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:background="@drawable/menu"
+        android:layout_margin="70dp"/>
 
+    <TableLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center">
+
+        <TableRow>
+            <Button
+                android:id="@+id/translate"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_margin="10dp"
+                android:textSize="18dp"
+                android:background="@drawable/translate"
+                android:paddingTop="110dp"/>
+
+            <Button
+                android:id="@+id/chatting"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_margin="10dp"
+                android:background="@drawable/chatting"
+                android:textSize="18dp"
+                android:paddingTop="110dp"/>
+        </TableRow>
+        <TableRow>
+            <Button
+                android:id="@+id/community"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_margin="10dp"
+                android:textSize="18dp"
+                android:background="@drawable/community"
+                android:paddingTop="110dp"/>
+            <Button
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_margin="10dp"
+                android:background="@drawable/korea_flag" />
+        </TableRow>
+    </TableLayout>
 </LinearLayout>

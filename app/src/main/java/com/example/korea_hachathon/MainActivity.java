@@ -8,20 +8,42 @@ import android.widget.Button;
 
 public class MainActivity extends AppCompatActivity {
 
-    public String country = "1";
-    private Button startBtn;
+    public static String country = null;
+    private Button English,China,Japan;
+    Intent intent = null;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        English = (Button)findViewById(R.id.English);
+        China = (Button)findViewById(R.id.China);
+        Japan = (Button)findViewById(R.id.Japan);
 
-        startBtn = (Button)findViewById(R.id.start);
-
-        startBtn.setOnClickListener(new View.OnClickListener() {
+        English.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent  = new Intent(getApplicationContext(),MenuActivity.class);
-                intent.putExtra("country",country);
+                intent = new Intent(getApplicationContext(),MenuActivity.class);
+                intent.putExtra("country","English");
+                country = "English";
+                startActivity(intent);
+            }
+        });
+        China.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                intent = new Intent(getApplicationContext(),MenuActivity.class);
+                intent.putExtra("country","China");
+                country = "China";
+                startActivity(intent);
+            }
+        });
+        Japan.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                intent = new Intent(getApplicationContext(),MenuActivity.class);
+                intent.putExtra("country","Japan");
+                country = "Japan";
                 startActivity(intent);
             }
         });

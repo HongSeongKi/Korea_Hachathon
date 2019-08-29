@@ -9,6 +9,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -30,6 +31,7 @@ public class CommunityActivity extends AppCompatActivity {
     CommunityAdapter adapter;
     TextView textView;
     Button btn,btn2;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -63,7 +65,7 @@ public class CommunityActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 Toast.makeText(getApplicationContext(),"버튼 클릭",Toast.LENGTH_SHORT).show();
-                new JSONTask().execute("http://192.168.130.1:3000/users"); //전체 리스트 가저오기
+                new JSONTask().execute("http://192.168.123.126:3000/users"); //전체 리스트 가저오기
             }
         });
 

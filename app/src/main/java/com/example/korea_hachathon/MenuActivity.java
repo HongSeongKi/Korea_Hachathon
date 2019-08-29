@@ -11,7 +11,7 @@ public class MenuActivity extends AppCompatActivity {
     private Button translate;
     private Button chatting;
     private Button community;
-    String country;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -22,31 +22,41 @@ public class MenuActivity extends AppCompatActivity {
         community = (Button)findViewById(R.id.community);
 
         Intent intent = new Intent(this.getIntent());
-        country = intent.getStringExtra("country");
+        MainActivity.country = intent.getStringExtra("country");
 
-        System.out.println("country:"+country);
-        if(country.equals("1"))
+        System.out.println("country:"+ MainActivity.country);
+        if(MainActivity.country.equals("English"))
         {
             translate.setText("translate");
-            chatting.setText("catting");
+            chatting.setText("chatting");
             community.setText("community");
-        }else if(country.equals(2)){
+        }else if(MainActivity.country.equals("China")){
 
-        }else if(country.equals(3)){
+        }else if(MainActivity.country.equals("Japan")){
 
         }
+        translate.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+               Intent intent = new Intent(getApplicationContext(),TranslateAcitivy.class);
+               intent.putExtra("country",MainActivity.country);
+               startActivity(intent);
+            }
+        });
 
         chatting.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-               // Intent intent = new Intent(getApplicationContext(),)
+                Intent intent = new Intent(getApplicationContext(),TranslateAcitivy.class);
+                intent.putExtra("country",MainActivity.country);
+                startActivity(intent);
             }
         });
         community.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(getApplicationContext(),CommunityActivity.class);
-                intent.putExtra("number",country);
+                intent.putExtra("country",MainActivity.country);
                 startActivity(intent);
             }
         });
