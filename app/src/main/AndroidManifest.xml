@@ -19,7 +19,8 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         android:usesCleartextTraffic="true">
-        <activity android:name=".ChattingActivity"></activity>
+        <activity android:name=".RealChattingActivity"></activity>
+        <activity android:name=".ChattingActivity" />
         <activity android:name=".WriteActivity" />
         <activity android:name=".TranslateAcitivy" />
         <activity android:name=".MakeCommunity" />

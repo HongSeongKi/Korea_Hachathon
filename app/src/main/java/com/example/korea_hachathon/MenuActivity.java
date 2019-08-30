@@ -31,9 +31,13 @@ public class MenuActivity extends AppCompatActivity {
             chatting.setText("chatting");
             community.setText("community");
         }else if(MainActivity.country.equals("China")){
-
+            translate.setText("");
+            chatting.setText("");
+            community.setText("");
         }else if(MainActivity.country.equals("Japan")){
-
+            translate.setText("");
+            chatting.setText("");
+            community.setText("");
         }
         translate.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -47,7 +51,7 @@ public class MenuActivity extends AppCompatActivity {
         chatting.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(getApplicationContext(),TranslateAcitivy.class);
+                Intent intent = new Intent(getApplicationContext(),ChattingActivity.class);
                 intent.putExtra("country",MainActivity.country);
                 startActivity(intent);
             }
