@@ -3,16 +3,14 @@ package com.example.korea_hachathon;
 public class CommunityItem {
     String title;
     String content;
-    String commentlength;
 
     public CommunityItem(){
 
     }
 
-    public CommunityItem(String title, String content,String commentlength) {
+    public CommunityItem(String title, String content) {
         this.title = title;
         this.content = content;
-        this.commentlength = commentlength;
     }
 
     public String getTitle() {
@@ -31,11 +29,4 @@ public class CommunityItem {
         this.content = content;
     }
 
-    public String getCommentlength() {
-        return commentlength;
-    }
-
-    public void setCommentlength(String commentlength) {
-        this.commentlength = commentlength;
-    }
 }

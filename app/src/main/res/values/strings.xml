@@ -1,3 +1,7 @@
 <resources>
     <string name="app_name">Korea_Hachathon</string>
+    <string name="hello_world">Hello world!</string>
+    <string name="action_settings">Settings</string>
+    <string name="str_start">" "</string>
+    <string name="str_stop">Stop</string>
 </resources>

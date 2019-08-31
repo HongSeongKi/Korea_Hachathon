@@ -30,5 +30,12 @@ public class TranslateAcitivy extends AppCompatActivity {
                 startActivity(intent);
             }
         });
+        speak.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(getApplicationContext(),SpeakActivity.class);
+                startActivity(intent);
+            }
+        });
     }
 }

@@ -20,6 +20,7 @@ public class MainActivity extends AppCompatActivity {
         China = (Button)findViewById(R.id.China);
         Japan = (Button)findViewById(R.id.Japan);
 
+
         English.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

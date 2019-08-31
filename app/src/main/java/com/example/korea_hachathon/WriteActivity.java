@@ -27,6 +27,7 @@ public class WriteActivity extends AppCompatActivity {
     private Button pencil;
     private Button erase;
     private Button send;
+    private Button translate;
     private DrawView drawView;
     private TextView[] text = new TextView[5];
     ArrayList<String> array = new ArrayList<>();
@@ -43,6 +44,7 @@ public class WriteActivity extends AppCompatActivity {
         erase = (Button) findViewById(R.id.erase);
         send = (Button) findViewById(R.id.send);
         drawView = (DrawView) findViewById(R.id.drawView);
+        translate = (Button)findViewById(R.id.translate);
 
         text[0] = (TextView)findViewById(R.id.text1);
         text[1] = (TextView)findViewById(R.id.text2);

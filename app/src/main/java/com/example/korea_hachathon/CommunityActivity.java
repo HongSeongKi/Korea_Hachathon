@@ -1,6 +1,7 @@
 package com.example.korea_hachathon;
 
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.AsyncTask;
 import android.os.StrictMode;
 import android.support.v7.app.AppCompatActivity;
@@ -11,6 +12,7 @@ import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ListView;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -29,8 +31,8 @@ public class CommunityActivity extends AppCompatActivity {
     private ListView listView;
     ArrayList<CommunityItem> items;
     CommunityAdapter adapter;
-    TextView textView;
-    Button btn,btn2;
+    Button write;
+    Spinner spinner;
 
 
     @Override
@@ -48,28 +50,16 @@ public class CommunityActivity extends AppCompatActivity {
         listView = (ListView) findViewById(R.id.listView);
         adapter = new CommunityAdapter();
         items = new ArrayList<CommunityItem>();
-        ;
-        textView = (TextView) findViewById(R.id.textView);
-        btn = (Button) findViewById(R.id.button);
-        btn2 = (Button)findViewById(R.id.button2);
+        write = (Button)findViewById(R.id.write);
+        spinner = (Spinner)findViewById(R.id.spinner);;
 
-        adapter.addItem(new CommunityItem("여행후기~", null,null));
-        adapter.addItem(new CommunityItem("재밌었습니다.", null,null));
-        adapter.addItem(new CommunityItem("추억여행", null,null));
-        adapter.addItem(new CommunityItem("하하하~", null,null));
-        adapter.addItem(new CommunityItem("히히히~", null,null));
+
+        adapter.addItem(new CommunityItem("여행후기~", "너모 재밋죵"));
 
         listView.setAdapter(adapter);
 
-        btn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Toast.makeText(getApplicationContext(),"버튼 클릭",Toast.LENGTH_SHORT).show();
-                new JSONTask().execute("http://192.168.123.126:3000/users"); //전체 리스트 가저오기
-            }
-        });
 
-        btn2.setOnClickListener(new View.OnClickListener() {
+        write.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(getApplicationContext(),MakeCommunity.class);
@@ -97,7 +87,11 @@ public class CommunityActivity extends AppCompatActivity {
         public View getView(int position, View convertView, ViewGroup parent) {
             CommunityItemView view = new CommunityItemView(getApplicationContext());
             CommunityItem item = items.get(position);
+            if(view != null){
+                view.setBackgroundColor(Color.parseColor("#AAD0DC"));
+            }
             view.setTitle(item.getTitle());
+            view.setContent(item.getContent());
             return view;
         }
 
