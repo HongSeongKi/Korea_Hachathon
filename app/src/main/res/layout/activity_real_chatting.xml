@@ -5,7 +5,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#AAD0DC"
+    android:background="@color/colormain"
     android:orientation="vertical">
 
     <LinearLayout
@@ -19,8 +19,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:transcriptMode="alwaysScroll"
-            android:divider="@android:color/transparent"
-            android:dividerHeight="12dp">
+            android:divider="@android:color/transparent">
         </ListView>
 
     </LinearLayout>

@@ -5,6 +5,7 @@ import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
+import android.graphics.Color;
 import android.net.Uri;
 import android.os.Environment;
 import android.os.Handler;
@@ -44,13 +45,13 @@ public class RealChattingActivity extends AppCompatActivity {
     private BufferedReader networkReader;
     private BufferedWriter networkWriter;
     private static final int PICK_FROM_ALBUM = 1;
-    private String globalLine;
-    private String ip = "192.168.1.146";
+    public String globalLine;
+    public String global;
+    private String ip = "172.20.200.121";
     private int port = 9100;
     private ListView listView;
-
     AlertDialog.Builder ad;
-    String myNickName = null;
+    String myNickName = MyGlobals.getInstance().getNickName();
     Button send, camera;
     EditText chat_edit,editText;
     ChattingAdapter adapter ;
@@ -85,85 +86,173 @@ public class RealChattingActivity extends AppCompatActivity {
                     cursor.moveToFirst();
 
                     tempFile = new File(cursor.getString(column_index));
+                    System.out.println("tempFile : "+tempFile.toString());
 
                 } finally {
                     if (cursor != null) {
                         cursor.close();
                     }
                 }
+
+                Thread connect3 = new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        String str = tempFile.toString();
+                        System.out.println(str);
+                        imageString = str.split("/0/")[1];
+                        System.out.println(imageString);
+
+                        PrintWriter out = new PrintWriter(MyGlobals.getInstance().getNetworkWriter(),true);
+                        File file = new File(Environment.getExternalStorageDirectory()+"/"+imageString);
+                        int file_length = (int)file.length();
+                        out.println(myNickName+"@image_send_client_to_server@test_image.jpg@"+file_length);
+
+                        try{
+                            FileInputStream fis = new FileInputStream(file);
+                            DataInputStream dis = new DataInputStream(fis);
+                            DataOutputStream dos = new DataOutputStream(MyGlobals.getInstance().getSocket().getOutputStream());
+
+                            int len;
+                            int total_len = 0;
+                            int size = 1024;
+                            byte[] image_data = new byte[file_length];
+                            //System.out.println("image_data@@@@@@@@@" + image_data.length);
+                            /*dis.readFully(image_data);
+                            System.out.println("image_data@@@@@@@@@" + image_data.length);
+
+                            dos.write(image_data,0,image_data.length);
+                            dos.flush();
+                            dos.close();*/
+                            while((len = dis.read(image_data)) != -1 )
+                            {
+                                System.out.println("len : "+len);
+                                total_len+=len;
+                                dos.write(image_data,0,len);
+                                dos.flush();
+                                if(total_len>=file_length)
+                                    break;
+                            }
+                        }catch(Exception e){
+                            e.printStackTrace();
+                        }
+
+
+                        out.println(myNickName+"@image_send_server_to_client@test_image.jpg@"+ChattingActivity.local); //사진 전송시 지역정보 보냄
+                    }
+                });
                 connect3.start();
             }
         }
     }
 
-    Thread connect3 = new Thread(new Runnable() {
-        @Override
-        public void run() {
-            String str = tempFile.toString();
-            System.out.println(str);
-            imageString = str.split("/0/")[1];
-            System.out.println(imageString);
 
-            PrintWriter out = new PrintWriter(MyGlobals.getInstance().getNetworkWriter(),true);
-            File file = new File(Environment.getExternalStorageDirectory()+"/"+imageString);
-            long file_length = file.length();
-            out.println(myNickName+"@image_send_client_to_server@test_image.jpg@"+String.valueOf(file_length));
+   /* @Override
+    protected void onPause() {
+        super.onPause();
+        MyGlobals.getInstance().setSocket(null);
+        try {
+            socket.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        connect_and_check.interrupt();
+    }*/
 
-            try{
-                FileInputStream fis = new FileInputStream(file);
-                DataInputStream dis = new DataInputStream(fis);
-                DataOutputStream dos = new DataOutputStream(MyGlobals.getInstance().getSocket().getOutputStream());
 
-                int len;
-                int total_len = 0;
-                int size = 1024;
-                byte[] image_data = new byte[size];
-                while((len = dis.read(image_data)) != -1 )
-                {
-                    total_len+=len;
-                    dos.write(image_data,0,len);
-                    dos.flush();
-                    if(total_len>=file_length)
-                        break;
-                }
-            }catch(Exception e){
+    @Override
+    protected void onStop() {
+        super.onStop();
+        if(MyGlobals.getInstance().getFlag() == 1) {
+            System.out.println("onStop 호출됨");
+            MyGlobals.getInstance().setStop(1);
+            connect_and_check.interrupt();
+            MyGlobals.getInstance().setCurrent_connect(null);
+            MyGlobals.getInstance().setSocket(null);
+            try {
+                socket.close();
+            } catch (IOException e) {
                 e.printStackTrace();
             }
-
-            out.println(myNickName+"@image_send_server_to_client@test_image.jpg@"+ChattingActivity.local); //사진 전송시 지역정보 보냄
         }
-    });
+        MyGlobals.getInstance().setFlag(1);
+
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_real_chatting);
 
+        System.out.println("onCreate 호출됨@@@@@@@@@@@@@@@@@@");
+        MyGlobals.getInstance().setStop(0);
         send = (Button)findViewById(R.id.send);
         camera = (Button)findViewById(R.id.camera);
         chat_edit = (EditText)findViewById(R.id.chat_EditText);
         listView = (ListView)findViewById(R.id.listView);
         adapter = new ChattingAdapter();
 
-        connect_and_check.start(); //소켓 설정 및 쓰레드 시작
+        if(MyGlobals.getInstance().getCurrent_connect()== null) {
+            MyGlobals.getInstance().setCurrent_connect(connect_and_check);
+            connect_and_check.start(); //소켓 설정 및 쓰레드 시작
+        }
+        else{
+            MyGlobals.getInstance().getCurrent_connect().interrupt();
+            connect_and_check.start();
+            MyGlobals.getInstance().setCurrent_connect(connect_and_check);
+        }
+
+
         tedPermission();
 
-        ad = new AlertDialog.Builder(RealChattingActivity.this);
+            ad = new AlertDialog.Builder(RealChattingActivity.this);
 
-        ad.setTitle("NICK NAME?");
-        editText = new EditText(RealChattingActivity.this);
-        ad.setView(editText);
-        ad.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-               connect.start();
-            }
-        });
-        ad.show();
+
+            ad.setTitle("NICK NAME?");
+            editText = new EditText(RealChattingActivity.this);
+            ad.setView(editText);
+            ad.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+
+                    Thread connect = new Thread(new Runnable() {
+                        @Override
+                        public void run() {
+                            PrintWriter out = new PrintWriter(MyGlobals.getInstance().getNetworkWriter(), true);
+                            myNickName = editText.getText().toString();
+                            MyGlobals.getInstance().setNickName(editText.getText().toString());
+                            out.println(MyGlobals.getInstance().getNickName() + "#" + ChattingActivity.local);
+                        }
+                    });
+                    connect.start();
+
+                }
+            });
+
+            ad.show();
+
 
         send.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                Thread connect2 = new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        if(chat_edit.getText().toString() != null && !chat_edit.getText().toString().equals(""))
+                        {
+                            PrintWriter out = new PrintWriter(MyGlobals.getInstance().getNetworkWriter(),true);
+                            out.println(myNickName+"@normal_chatting@" + chat_edit.getText().toString()+"@"+ChattingActivity.local);
+
+                            runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    chat_edit.setText("");
+                                    System.out.println("종료됨!@@@@@@@@@@@@@@@@@@@@@@@@");
+                                }
+                            });
+                            return;
+                        }
+                    }
+                });
                 connect2.start();
             }
         });
@@ -171,18 +260,12 @@ public class RealChattingActivity extends AppCompatActivity {
         camera.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                MyGlobals.getInstance().setFlag(0);
                 Intent intent = new Intent(Intent.ACTION_PICK);
                 intent.setType(MediaStore.Images.Media.CONTENT_TYPE);
                 startActivityForResult(intent, PICK_FROM_ALBUM);
             }
         });
-
-        adapter.addItem(new ChattingItem("천지완","앙앙1",null));
-        adapter.addItem(new ChattingItem("홍석규","앙앙2",null));
-        adapter.addItem(new ChattingItem("김희원","앙앙3",null));
-        adapter.addItem(new ChattingItem("김지혜","앙앙4",null));
-        adapter.addItem(new ChattingItem("홍성빈","앙앙5",null));
-
         listView.setTranscriptMode(ListView.TRANSCRIPT_MODE_ALWAYS_SCROLL);
         listView.setAdapter(adapter);
         adapter.notifyDataSetChanged();
@@ -211,28 +294,11 @@ public class RealChattingActivity extends AppCompatActivity {
 
     }
 
-    Thread connect = new Thread(new Runnable() {
-        @Override
-        public void run() {
-            PrintWriter out = new PrintWriter(networkWriter,true);
-            myNickName = editText.getText().toString();
-            out.println(myNickName);
-        }
-    });
 
-    Thread connect2 = new Thread(new Runnable() {
-        @Override
-        public void run() {
-            if(chat_edit.getText().toString() != null && !chat_edit.getText().toString().equals(""))
-            {
-                PrintWriter out = new PrintWriter(networkWriter,true);
-                out.println(myNickName+"@normal_chatting@" + chat_edit.getText().toString()+"@"+ChattingActivity.local);
-                chat_edit.setText("");
-            }
-        }
-    });
 
-    Thread connect_and_check = new Thread(new Runnable() {
+
+
+   public Thread connect_and_check = new Thread(new Runnable() {
         @Override
         public void run() {
             try{
@@ -244,51 +310,92 @@ public class RealChattingActivity extends AppCompatActivity {
 
             String line = "";
             int file_num = 0;
-            while(true){
+            while(true && (MyGlobals.getInstance().getStop() == 0)){
                 try{
-                    line = networkReader.readLine().toString();
+                    System.out.println("network Reader : "+MyGlobals.getInstance().getNetworkReader());
+                    line = MyGlobals.getInstance().getNetworkReader().readLine();
                 }catch(IOException e){
                     e.printStackTrace();
                 }
 
                 globalLine = line;
-                if(globalLine.split("@")[1].equals("image_send_server_to_client")) //지역정보 넣어야 한다.
-                {
+                System.out.println("globalLine : "+globalLine);
+//                System.out.println(globalLine.split("@")[3]);
+                    if(globalLine.split("@")[1].equals("image_send_server_to_client") && globalLine.split("@")[4].trim().equals(ChattingActivity.local)) //지역정보 넣어야 한다.
+                    {
                     String temp_name = globalLine.split("@")[2];
                     String file_name = temp_name.split("\\.")[0] + "_" + file_num + "." + temp_name.split("\\.")[1];
                     String file_path = Environment.getExternalStorageDirectory() + "/" + file_name;
                     File file = new File(file_path);
+                    System.out.println("file path : "+file.toString());
                     FileOutputStream output = null;
 
 
-                    int max_size=Integer.parseInt(globalLine.split("@")[3]); // file_size;
-                    System.out.println("max_size : "+max_size);
-                    byte buf[] = new byte[max_size];
+                        int max_size=Integer.parseInt(globalLine.split("@")[3]); // file_size;
+                        System.out.println("max_size : "+max_size);
+                       // byte buf[] = new byte[max_size];
 
-                    try{
-                        output = new FileOutputStream(file);
+                        try{
+                            output = new FileOutputStream(file);
                         InputStream is = socket.getInputStream();
                         DataInputStream dis = new DataInputStream(is);
-
+                        System.out.println("파일 입력 준비 ");
                         PrintWriter out = new PrintWriter(MyGlobals.getInstance().getNetworkWriter(),true);
                         out.println("ready");
-                        dis.readFully(buf,0,max_size);
-
-                        System.out.println("buf_size : "+buf.length);
-                        output.write(buf,0,max_size);
-                        output.flush();
-                        output.close();
+                        byte[] buf = new byte[1024];
+                        int len;
+                        int total_len=0;
+                        while((len=dis.read(buf)) != -1)
+                        {
+                          System.out.println("len : "+len);
+                          total_len += len;
+                         output.write(buf,0,len);
+                         output.flush();
+                         if(total_len>=max_size) {
+                             System.out.println("tot@@@@@@@@@@ : "+total_len);
+                             output.close();
+                             break;
+                         }
+                        }
                     }catch(IOException e){
                         e.printStackTrace();
                     }
-
+                        System.out.println("이미지 줍니당~~11111@@@@@@@@@@@@@@@@@@");
                     final String inner_name = file_name;
                     file_num++;
-
+                        System.out.println("이미지 줍니당~~22222222@@@@@@@@@@@@@@@@");
+                        System.out.println("globalLin55e : "+globalLine);
+                        global = globalLine.toString();
                     runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
-                            if(globalLine.split("@")[3].equals(ChattingActivity.local)) {
+                            System.out.println("global : "+global);
+                            System.out.println("Chatting@@@@@ : "+ChattingActivity.local);
+                            System.out.println(globalLine.split("@")[4].trim().equals(ChattingActivity.local));
+                            if(globalLine.split("@")[4].trim().equals(ChattingActivity.local)) {
+                                System.out.println("이미지 줍니당~~3333333333@@@@@@@@@@@@@@@@@@");
+                                Uri uri = Uri.parse("file:///" + Environment.getExternalStorageDirectory() + "/" + inner_name);
+                                ChattingItem item = new ChattingItem(globalLine.split("@")[0], null, uri);//이름,내용,사진
+
+                                adapter.addItem(item);
+                                listView.setTranscriptMode(ListView.TRANSCRIPT_MODE_ALWAYS_SCROLL);
+                                listView.setAdapter(adapter);
+                                adapter.notifyDataSetChanged();
+                                listView.setSelection(adapter.getCount() - 1);
+                            }
+                        }
+                    });
+
+
+                    /*runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            System.out.println("global : "+global);
+                            System.out.println("Chatting@@@@@ : "+ChattingActivity.local);
+                            System.out.println(globalLine.split("@")[4].trim().equals(ChattingActivity.local));
+                            if(globalLine.split("@")[4].trim().equals(ChattingActivity.local)) {
+
+                                System.out.println("이미지 줍니당~~3333333333@@@@@@@@@@@@@@@@@@");
                                 Uri uri = Uri.parse("file:///" + Environment.getExternalStorageDirectory() + "/" + inner_name);
                                 ChattingItem item = new ChattingItem(globalLine.split("@")[0], "", uri);//이름,내용,사진
                                 adapter.addItem(item);
@@ -298,14 +405,19 @@ public class RealChattingActivity extends AppCompatActivity {
                                 listView.setSelection(adapter.getCount() - 1);
                             } //지역정보가 동일 해야지만 받는다
                         }
-                    });
+                    });*/
                 }
                 else if(globalLine.split("@")[1].equals("normal_chatting"))
                 {
                     runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
-                            if(globalLine.split("@")[3].equals(ChattingActivity.local)) {
+                            System.out.println("3 : @@@@@@@@"+globalLine);
+                            System.out.println("3 : !!!!!!!!"+globalLine.split("@")[3]);
+                            System.out.println(ChattingActivity.local);
+                            if(globalLine.split("@")[3].trim().equals(ChattingActivity.local)) {
+                                System.out.println("들어갔씁니다~");
+                                System.out.println("content : "+globalLine.split("@")[2]);
                                 ChattingItem item = new ChattingItem(globalLine.split("@")[0], globalLine.split("@")[2], null);//유저이름,내용입력,사진은 -1
                                 adapter.addItem(item);
                                 listView.setTranscriptMode(ListView.TRANSCRIPT_MODE_ALWAYS_SCROLL);
@@ -386,6 +498,9 @@ public class RealChattingActivity extends AppCompatActivity {
             else
                 view = (ChattingItemView)convertView;
             ChattingItem item = items.get(position);
+            if(item.getContent()==null){
+                view.getContent().setBackgroundColor(Color.parseColor("#AAD0DC"));
+            }
             view.setName(item.getName());
             view.setContent(item.getContent());
             view.setImageView(item.getUri());

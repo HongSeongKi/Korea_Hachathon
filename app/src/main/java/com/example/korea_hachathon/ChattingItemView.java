@@ -2,6 +2,7 @@ package com.example.korea_hachathon;
 
 import android.content.Context;
 import android.net.Uri;
+import android.support.v7.widget.CardView;
 import android.text.Layout;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
@@ -9,10 +10,19 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-public class ChattingItemView extends LinearLayout {
+public class ChattingItemView extends CardView {
     TextView name;
     TextView content;
     ImageView imageView;
+    ImageView proImage;
+
+    public TextView getContent() {
+        return content;
+    }
+
+    public void setContent(TextView content) {
+        this.content = content;
+    }
 
     public ChattingItemView(Context context) {
         super(context);
@@ -30,6 +40,7 @@ public class ChattingItemView extends LinearLayout {
         name = (TextView)findViewById(R.id.name);
         content = (TextView)findViewById(R.id.content);
         imageView = (ImageView)findViewById(R.id.imageView);
+        proImage = (ImageView)findViewById(R.id.proImage);
     }
 
     public void setName(String name1){
