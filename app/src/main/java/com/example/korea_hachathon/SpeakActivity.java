@@ -1,6 +1,8 @@
 package com.example.korea_hachathon;
 
 import android.app.Activity;
+import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
@@ -14,7 +16,9 @@ import com.example.korea_hachathon.AudioWriterPCM;
 import com.naver.speech.clientapi.SpeechRecognitionResult;
 
 import java.lang.ref.WeakReference;
+import java.sql.Time;
 import java.util.List;
+import java.util.concurrent.ExecutionException;
 
 public class SpeakActivity extends Activity {
 
@@ -27,9 +31,10 @@ public class SpeakActivity extends Activity {
     private NaverRecognizer naverRecognizer;
 
     private TextView txtResult;
+    public static TextView txtResilt_2;
     private Button btnStart;
     private String mResult;
-
+//    textView
     private AudioWriterPCM writer;
 
     // Handle speech recognition Messages.
@@ -37,7 +42,6 @@ public class SpeakActivity extends Activity {
         switch (msg.what) {
             case R.id.clientReady:
                 // Now an user can speak.
-                txtResult.setText("Connected");
                 writer = new AudioWriterPCM(
                         Environment.getExternalStorageDirectory().getAbsolutePath() + "/NaverSpeechTest");
                 writer.open("Test");
@@ -97,7 +101,7 @@ public class SpeakActivity extends Activity {
 
         txtResult = (TextView) findViewById(R.id.txt_result);
         btnStart = (Button) findViewById(R.id.btn_start);
-
+        txtResilt_2 = (TextView) findViewById(R.id.textView);
         handler = new RecognitionHandler(this);
         naverRecognizer = new NaverRecognizer(this, handler, CLIENT_ID);
 
@@ -118,6 +122,30 @@ public class SpeakActivity extends Activity {
                     btnStart.setEnabled(false);
                     btnStart.setBackgroundResource(R.drawable.record);
                     naverRecognizer.getSpeechRecognizer().stop();
+                    try {
+                        Thread.sleep(1000);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+
+                    NaverTranslateTask asyncTask = new NaverTranslateTask();
+                    String sText = txtResult.getText().toString();
+                    if(!sText.equals("")) {
+
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
+                            try {
+                                txtResilt_2.setText(asyncTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, sText, "ko",MainActivity.country, "2").get());
+                            } catch (ExecutionException e) {
+                                e.printStackTrace();
+                            } catch (InterruptedException e) {
+                                e.printStackTrace();
+                            }
+                        } else {
+                            asyncTask.execute(sText);
+                        }
+                    }
+
+
                 }
             }
         });

@@ -8,27 +8,25 @@ import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.widget.TextView;
 
-import com.makeramen.roundedimageview.RoundedImageView;
-
-public class CommunityItemView extends CardView {
+public class CommunityItemView_2 extends CardView {
     TextView title;
     TextView content;
 
-    public CommunityItemView(@NonNull Context context) {
+    public CommunityItemView_2(@NonNull Context context) {
         super(context);
         init(context);
     }
 
-    public CommunityItemView(@NonNull Context context, @Nullable AttributeSet attrs) {
+    public CommunityItemView_2(@NonNull Context context, @Nullable AttributeSet attrs) {
         super(context, attrs);
         init(context);
     }
 
     public void init(Context context){
         LayoutInflater inflater = (LayoutInflater)context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        inflater.inflate(R.layout.community_item,this,true);
-        title = (TextView)findViewById(R.id.title);
-        content = (TextView)findViewById(R.id.content);
+        inflater.inflate(R.layout.community_item_2,this,true);
+        title = (TextView)findViewById(R.id.title__2);
+        content = (TextView)findViewById(R.id.content__2);
     }
 
     public void setTitle(String text){

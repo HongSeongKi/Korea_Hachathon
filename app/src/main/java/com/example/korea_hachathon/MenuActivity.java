@@ -21,29 +21,18 @@ public class MenuActivity extends AppCompatActivity {
         chatting = (Button)findViewById(R.id.chatting);
         community = (Button)findViewById(R.id.community);
 
-        Intent intent = new Intent(this.getIntent());
-        MainActivity.country = intent.getStringExtra("country");
+
 
         System.out.println("country:"+ MainActivity.country);
-        if(MainActivity.country.equals("English"))
-        {
+
             translate.setText("translate");
             chatting.setText("chatting");
             community.setText("community");
-        }else if(MainActivity.country.equals("China")){
-            translate.setText("");
-            chatting.setText("");
-            community.setText("");
-        }else if(MainActivity.country.equals("Japan")){
-            translate.setText("");
-            chatting.setText("");
-            community.setText("");
-        }
+
         translate.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                Intent intent = new Intent(getApplicationContext(),TranslateAcitivy.class);
-               intent.putExtra("country",MainActivity.country);
                startActivity(intent);
             }
         });
@@ -52,7 +41,6 @@ public class MenuActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(getApplicationContext(),ChattingActivity.class);
-                intent.putExtra("country",MainActivity.country);
                 startActivity(intent);
             }
         });
@@ -60,7 +48,6 @@ public class MenuActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(getApplicationContext(),CommunityActivity.class);
-                intent.putExtra("country",MainActivity.country);
                 startActivity(intent);
             }
         });

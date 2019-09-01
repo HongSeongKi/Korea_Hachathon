@@ -9,7 +9,7 @@ import android.widget.Button;
 public class MainActivity extends AppCompatActivity {
 
     public static String country = null;
-    private Button English,China,Japan;
+    private Button English,China,Japan, Korea;
     Intent intent = null;
 
     @Override
@@ -19,14 +19,14 @@ public class MainActivity extends AppCompatActivity {
         English = (Button)findViewById(R.id.English);
         China = (Button)findViewById(R.id.China);
         Japan = (Button)findViewById(R.id.Japan);
+        Korea = (Button)findViewById(R.id.Korea);
 
 
         English.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 intent = new Intent(getApplicationContext(),MenuActivity.class);
-                intent.putExtra("country","English");
-                country = "English";
+                country = "en";
                 startActivity(intent);
             }
         });
@@ -34,8 +34,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 intent = new Intent(getApplicationContext(),MenuActivity.class);
-                intent.putExtra("country","China");
-                country = "China";
+                country = "zh-CN";
                 startActivity(intent);
             }
         });
@@ -43,8 +42,15 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 intent = new Intent(getApplicationContext(),MenuActivity.class);
-                intent.putExtra("country","Japan");
-                country = "Japan";
+                country = "ja";
+                startActivity(intent);
+            }
+        });
+        Korea.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                intent = new Intent(getApplicationContext(),MenuActivity.class);
+                country = "ko";
                 startActivity(intent);
             }
         });

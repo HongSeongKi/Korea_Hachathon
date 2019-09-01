@@ -3,11 +3,9 @@ package com.example.korea_hachathon;
 import android.content.Context;
 import android.net.Uri;
 import android.support.v7.widget.CardView;
-import android.text.Layout;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 
 public class ChattingItemView extends CardView {

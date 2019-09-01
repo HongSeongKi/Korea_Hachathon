@@ -16,9 +16,7 @@ public class TranslateAcitivy extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_translate_acitivy);
 
-        Intent intent = new Intent(this.getIntent());
-        String data = intent.getStringExtra("country");
-        System.out.println("data : "+data);
+
         speak = (Button)findViewById(R.id.speak);
         write = (Button)findViewById(R.id.write);
 

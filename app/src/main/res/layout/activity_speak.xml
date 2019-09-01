@@ -18,7 +18,6 @@
             android:id="@+id/txt_result"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="안녕"
             android:textColor="@android:color/white"
             android:textSize="30sp" />
     </LinearLayout>
@@ -50,8 +49,6 @@
             android:id="@+id/textView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-
-            android:text="Hi"
             android:textColor="#174C5D"
             android:textSize="30sp" />
     </LinearLayout>

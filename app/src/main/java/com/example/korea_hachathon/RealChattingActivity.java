@@ -1,5 +1,4 @@
 package com.example.korea_hachathon;
-
 import android.Manifest;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
@@ -240,7 +239,8 @@ public class RealChattingActivity extends AppCompatActivity {
                         if(chat_edit.getText().toString() != null && !chat_edit.getText().toString().equals(""))
                         {
                             PrintWriter out = new PrintWriter(MyGlobals.getInstance().getNetworkWriter(),true);
-                            out.println(myNickName+"@normal_chatting@" + chat_edit.getText().toString()+"@"+ChattingActivity.local);
+                            out.println(myNickName+"@normal_chatting@" + chat_edit.getText().toString()+ "&" + MainActivity.country + "@"+ChattingActivity.local);
+
 
                             runOnUiThread(new Runnable() {
                                 @Override
@@ -418,8 +418,22 @@ public class RealChattingActivity extends AppCompatActivity {
                             if(globalLine.split("@")[3].trim().equals(ChattingActivity.local)) {
                                 System.out.println("들어갔씁니다~");
                                 System.out.println("content : "+globalLine.split("@")[2]);
-                                ChattingItem item = new ChattingItem(globalLine.split("@")[0], globalLine.split("@")[2], null);//유저이름,내용입력,사진은 -1
-                                adapter.addItem(item);
+                                ChattingItem item;
+                                if(globalLine.split("@")[2].contains("&"))
+                                {
+                                    System.out.println("통과전" + globalLine.split("@")[2].split("&")[1]);
+                                    item = new ChattingItem(globalLine.split("@")[0],
+                                            MyGlobals.getInstance().translate(globalLine.split("@")[2].split("&")[0],"en", "ko"),null);//유저이름,내용입력,사진은 -1
+//                                    item = new ChattingItem(globalLine.split("@")[0],
+//                                            MyGlobals.getInstance().translate(globalLine.split("@")[2].split("&")[0],
+//                                                  "ko", "ko"),null);//유저이름,내용입력,사진은 -1
+                                    adapter.addItem(item);
+                                    System.out.println("통과후" + globalLine.split("@")[2].split("&")[1]);
+                                }else
+                                {
+                                    item = new ChattingItem(globalLine.split("@")[0], globalLine.split("@")[2],null);//유저이름,내용입력,사진은 -1
+                                    adapter.addItem(item);
+                                }
                                 listView.setTranscriptMode(ListView.TRANSCRIPT_MODE_ALWAYS_SCROLL);
                                 listView.setAdapter(adapter);
                                 adapter.notifyDataSetChanged();

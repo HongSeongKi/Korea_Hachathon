@@ -1,5 +1,6 @@
 package com.example.korea_hachathon;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -11,8 +12,10 @@ import android.os.Build;
 import android.os.Environment;
 import android.support.annotation.Nullable;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
+import android.widget.Toast;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -23,7 +26,7 @@ import java.util.ArrayList;
 public class DrawView extends View implements View.OnTouchListener{
 
     private ArrayList<PaintPoint> points = new ArrayList<>();
-    private int color = Color.BLACK;
+    private int color = Color.BLACK ;
     private int lineWith = 100;
     public static int flag =0;
 
@@ -61,7 +64,6 @@ public class DrawView extends View implements View.OnTouchListener{
                     p.setStrokeWidth(lineWith);
                     points.add(new PaintPoint(event.getX(), event.getY(), true, p));
                     invalidate();
-                    ;
                     break;
                 case MotionEvent.ACTION_UP:
                 case MotionEvent.ACTION_DOWN:
@@ -77,20 +79,28 @@ public class DrawView extends View implements View.OnTouchListener{
         invalidate();
     }
 
-    public void send(Context context){
+
+  public void send(Context context){
         this.setDrawingCacheEnabled(true);
+        this.buildDrawingCache();
+
         Bitmap screenshot = this.getDrawingCache();
 
-        System.out.println("save버튼 호출");
+        Toast.makeText(getContext(), "save버튼 호출", Toast.LENGTH_SHORT).show();
 
+        // @SuppressLint("SimpleDateFormat")SimpleDateFormat formatter = new SimpleDateFormat("yyyyMMddHHmmss");
+        //Date currentTime = new Date();
+        //String dateString = formatter.format(currentTime);
         String filename = "ctos_image.png";
         try{
             File file = new File(Environment.getExternalStorageDirectory(),filename);
             if(file.createNewFile())
-                System.out.println("파일 생성 성공");
+                Log.d("save","파일 생성 성공");
             OutputStream outStream = new FileOutputStream(file);
             screenshot.compress(Bitmap.CompressFormat.PNG,100,outStream);
+           // outStream.flush();
             outStream.close();
+
             if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
                 Intent intent = new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE);
                 Uri contentUri = Uri.fromFile(file);
@@ -99,12 +109,14 @@ public class DrawView extends View implements View.OnTouchListener{
             }else {
                 context.sendBroadcast(new Intent(Intent.ACTION_MEDIA_MOUNTED, Uri.parse("file://" + Environment.getExternalStorageDirectory())));
             }
-            System.out.println("저장완료");
-            System.out.println("File : "+file);
-        }catch(IOException e){
+        }
+        catch(IOException e){
             e.printStackTrace();
         }
+        this.setDrawingCacheEnabled(false);
     }
+
+
 
     @Override
     protected void onDraw(Canvas canvas) {
